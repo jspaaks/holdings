@@ -1,0 +1,7 @@
+.vscode
+backend/data/
+backend/node_modules
+backend/__pycache__
+backend/venv
+frontend/node_modules
+
