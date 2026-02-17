@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+[project]
+# https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
+authors = [
+    { name = "Jurriaan H. Spaaks", email = "jhspaaks@hotmail.com" }
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities"
+]
+dependencies = [
+    "pandas >= 3.0, <4",
+]
+description = "Data processing for Vanguard CSV file"
+keywords = [
+    "Vanguard",
+]
+license = {text = ""}
+name = "holdings"
+readme = "README.md"
+requires-python = ">=3.12"
+version = "0.0.0"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+[project.urls]
+Repository = "https://github.com/jspaaks/holdings"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+[project.scripts]
+process-holdings = "holdings.process:cli"

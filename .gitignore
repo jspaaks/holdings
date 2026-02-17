@@ -1,5 +1,8 @@
 .vscode
-backend/data/
+**/*.egg-info
+backend/.idea
+backend/build
+backend/data
 backend/node_modules
 backend/__pycache__
 backend/venv

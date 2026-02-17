@@ -1,18 +1,17 @@
-export type Transaction = {
+export type Buy = {
     date: string;
     price: number;
     shares: number;
-};
-
-export type Buy = Transaction & {
-    type: 'BUY';
-};
-
-export type Sell = Transaction & {
-    type: 'SELL';
+    shares_acc: number;
 };
 
 export type Holding = {
-    ticker: string;
-    transactions: (Buy | Sell)[];
+    buys: Buy[];
+    cost: number;
+    cost_per_share: number;
+    id: string;
+    max_price: number;
+    min_price: number;
+    previous_close: number;
+    shares: number;
 };
