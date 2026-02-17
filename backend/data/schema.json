@@ -1,0 +1,120 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "format": "url",
+            "type": "string"
+        },
+        "holdings": {
+            "minItems": 0,
+            "items": {
+                "additionalProperties": false,
+                "properties": {
+                    "buys": {
+                        "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "date": {
+                                    "format": "date",
+                                    "type": "string"
+                                },
+                                "price": {
+                                    "minimum": 0,
+                                    "type": "number"
+                                },
+                                "shares": {
+                                    "minimum": 0,
+                                    "multipleOf": 0.00001,
+                                    "type": "number"
+                                },
+                                "shares_acc": {
+                                    "minimum": 0,
+                                    "multipleOf": 0.00001,
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "date",
+                                "price",
+                                "shares",
+                                "shares_acc"
+                            ],
+                            "type": "object"
+                        },
+                        "type": "array"
+                    },
+                    "cost": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "cost_per_share": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "id": {
+                        "pattern": "[A-Z0-9\\.]{1,10}",
+                        "type": "string"
+                    },
+                    "max_price": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "min_price": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "previous_close": {
+                        "oneOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "price": {
+                                        "minimum": 0,
+                                        "type": "number"
+                                    },
+                                    "t": {
+                                        "minimum": 0,
+                                        "multipleOf": 1,
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "price",
+                                    "t"
+                                ],
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "shares": {
+                        "minimum": 0,
+                        "multipleOf": 0.00001,
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "buys",
+                    "cost",
+                    "cost_per_share",
+                    "id",
+                    "max_price",
+                    "min_price",
+                    "previous_close",
+                    "shares"
+                ],
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        }
+    },
+    "required": [
+        "$schema",
+        "holdings"
+    ],
+    "type": "object"
+}
