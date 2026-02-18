@@ -60,7 +60,7 @@ const drawChart = () => {
         b: 60,
         t: 60,
         l: 100,
-        r: 200,
+        r: 230,
     };
 
     // select the DOM element using the ref's value
@@ -85,16 +85,20 @@ const drawChart = () => {
     .range([props.height - margins.t - margins.b, 0]);
 
     // charting area
-    svg.append('g')
+    const chartgroup = svg.append('g')
+    .attr('id', 'chartgroup')
     .attr('transform', `translate(${margins.l},${margins.t})`)
+
+    chartgroup.append('g')
+    .attr('id', 'chartbg')
     .append('rect')
     .attr('width', props.width - margins.l - margins.r)
     .attr('height', props.height - margins.t - margins.b)
     .attr('fill', '#fff')
 
     // bars
-    svg.append('g')
-    .attr('transform', `translate(${margins.l},${margins.t})`)
+    chartgroup.append('g')
+    .attr('id', 'barsgroup')
     .selectAll('rect')
     .data(buys)
     .join('rect') // 'join' handles enter, update, and exit
@@ -105,43 +109,51 @@ const drawChart = () => {
     .attr('fill', 'steelblue');
 
     // x axis
-    svg.append('g')
-    .attr('transform', `translate(${margins.l},${props.height - margins.b})`)
+    chartgroup.append('g')
+    .attr('id', 'xaxis')
+    .attr('transform', `translate(0,${props.height - margins.b - margins.t})`)
     .call(d3.axisBottom(x));
 
     // y axis
-    svg.append('g')
-    .attr('transform', `translate(${margins.l},${margins.t})`)
+    chartgroup.append('g')
+    .attr('id', 'yaxis')
     .call(d3.axisLeft(y));
 
     // xlabel
-    svg.append('text')
-    .attr('class', 'x-label')
+    chartgroup.append('g')
+    .attr('id', 'xlabel')
+    .attr('transform', `translate(${(props.width - margins.l - margins.r) / 2}, ${props.height - margins.t - 0.35 * margins.b})`)
+    .append('text')
+    .attr('class', 'xlabel')
     .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'central')
-    .attr('transform', `translate(${margins.l + (props.width - margins.l - margins.r) / 2}, ${props.height - margins.b / 2})`)
+    .attr('dominant-baseline', 'middle')
     .text('Net cumulative number of shares');
 
     // ylabel
-    svg.append('text')
-    .attr('class', 'y-label')
+    chartgroup.append('g')
+    .attr('id', 'ylabel')
+    .attr('transform', `translate(${-0.5 * margins.l}, ${(props.height - margins.b - margins.t) / 2}) rotate(-90)`)
+    .append('text')
+    .attr('class', 'ylabel')
     .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'central')
-    .attr('transform', `translate(${margins.l / 2}, ${margins. t + (props.height - margins.b - margins.t) / 2}) rotate(-90)`)
+    .attr('dominant-baseline', 'middle')
     .text('Price ($)');
 
     // title
-    svg.append('text')
+    chartgroup.append('g')
+    .attr('id', 'title')
+    .attr('transform', `translate(${(props.width - margins.l - margins.r) / 2}, ${-0.5 * margins.t})`)
+    .append('text')
     .attr('class', 'title')
     .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'central')
-    .attr('transform', `translate(${margins.l + (props.width - margins.l - margins.r) / 2}, ${margins.t / 2})`)
+    .attr('dominant-baseline', 'middle')
     .text(ticker);
 
-    // cost per share
-    svg.append('g')
-    .attr('transform', `translate(${margins.l},${margins.t})`)
-    .append('line')
+    // cost per share line
+    const cpsgroup = chartgroup.append('g')
+    .attr('id', 'cpsgroup')
+
+    cpsgroup.append('line')
     .attr('x1', x(0))
     .attr('x2', x(shares))
     .attr('y1', y(cost_per_share))
@@ -150,29 +162,70 @@ const drawChart = () => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '7, 5');
 
-    // cost text
-    svg.append('text')
+    // cost per share text
+    cpsgroup.append('text')
+    .attr('class', 'chart-annotation')
     .attr('text-anchor', 'start')
-    .attr('dominant-baseline', 'central')
-    .attr('x', props.width - 0.8 * margins.r)
-    .attr('y', margins.t)
-    .attr('dy', '2em')
-    .text('cost:');
+    .attr('dominant-baseline', 'middle')
+    .attr('x', x(shares))
+    .attr('dx', '0.5em')
+    .attr('y', y(cost_per_share))
+    .attr('dy', '0em')
+    .text('cps');
 
-    svg.append('text')
+    // table group
+    const tablegroup = svg.append('g')
+    .attr('id', 'tablegroup')
+    .attr('transform', `translate(${props.width - margins.r},${margins.t+ 20})`)
+
+    // '%' text
+    tablegroup.append('text')
+    .attr('class', 'table-elem')
+    .attr('text-anchor', 'start')
+    .attr('dominant-baseline', 'middle')
+    .attr('x', 0.575 * margins.r)
+    .attr('y', 0)
+    .attr('dy', '0em')
+    .text('%');
+
+    // '$' text
+    tablegroup.append('text')
+    .attr('class', 'table-elem')
+    .attr('text-anchor', 'start')
+    .attr('dominant-baseline', 'middle')
+    .attr('x', 0.85 * margins.r)
+    .attr('y', 0)
+    .attr('dy', '0em')
+    .text('$');
+
+    // cost text
+    tablegroup.append('text')
+    .attr('class', 'table-elem')
     .attr('text-anchor', 'end')
-    .attr('dominant-baseline', 'central')
-    .attr('x', props.width - 0.1 * margins.r)
-    .attr('y', margins.t)
+    .attr('dominant-baseline', 'middle')
+    .attr('x', 0.4 * margins.r)
+    .attr('y', 0)
     .attr('dy', '2em')
-    .text(`$${cost.toFixed(2)}`);
+    .text('cost');
+
+    // cost absolute number
+    tablegroup.append('text')
+    .attr('class', 'table-elem')
+    .attr('text-anchor', 'end')
+    .attr('dominant-baseline', 'middle')
+    .attr('x', 0.9 * margins.r)
+    .attr('y', 0)
+    .attr('dy', '2em')
+    .text(`${cost.toFixed(0)}`);
 
     if (previous_close) {
 
-        // previous closing price
-        svg.append('g')
-        .attr('transform', `translate(${margins.l},${margins.t})`)
-        .append('line')
+        // previous closing price group
+        const pricegroup = chartgroup.append('g')
+        .attr('id', 'pricegroup')
+
+        // previous closing price line
+        pricegroup.append('line')
         .attr('x1', x(0))
         .attr('x2', x(shares))
         .attr('y1', y(previous_close.price))
@@ -181,60 +234,99 @@ const drawChart = () => {
         .style('stroke-width', 1)
         .style('stroke-dasharray', '15, 3');
 
+        // previous closing price text
+        pricegroup.append('text')
+        .attr('class', 'chart-annotation')
+        .attr('text-anchor', 'start')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', x(shares))
+        .attr('dx', '0.5em')
+        .attr('y', y(previous_close.price))
+        .attr('dy', '0em')
+        .text('price');
+
         const {gain, loss} = calcGainsAndLosses(buys, previous_close.price)
 
         // gain text
-        svg.append('text')
-        .attr('text-anchor', 'start')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.8 * margins.r)
-        .attr('y', margins.t)
-        .attr('dy', '4em')
-        .text('gain:');
-
-        svg.append('text')
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
         .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.1 * margins.r)
-        .attr('y', margins.t)
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.4 * margins.r)
+        .attr('y', 0)
         .attr('dy', '4em')
-        .text(`$${gain.toFixed(2)}`);
+        .text('gain');
+
+        // gain percent
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.625 * margins.r)
+        .attr('y', 0)
+        .attr('dy', '4em')
+        .text(`${(100 * gain / cost).toFixed(1)}`);
+
+        // gain absolute number
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.9 * margins.r)
+        .attr('y', 0)
+        .attr('dy', '4em')
+        .text(`${gain.toFixed(0)}`);
 
         // loss text
-        svg.append('text')
-        .attr('text-anchor', 'start')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.8 * margins.r)
-        .attr('y', margins.t)
-        .attr('dy', '6em')
-        .text(`loss:`);
-
-        svg.append('text')
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
         .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.1 * margins.r)
-        .attr('y', margins.t)
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.4 * margins.r)
+        .attr('y', 0)
         .attr('dy', '6em')
-        .text(`$${loss.toFixed(2)}`);
+        .text(`loss`);
+
+        // loss percent
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.625 * margins.r)
+        .attr('y', 0)
+        .attr('dy', '6em')
+        .text(`${(100 * loss / cost).toFixed(1)}`);
+
+        // loss absolute number
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.9 * margins.r)
+        .attr('y', 0)
+        .attr('dy', '6em')
+        .text(`${loss.toFixed(0)}`);
 
         // net text
-        svg.append('text')
-        .attr('text-anchor', 'start')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.8 * margins.r)
-        .attr('y', margins.t)
-        .attr('dy', '8em')
-        .text(`net:`);
-
-        svg.append('text')
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
         .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'central')
-        .attr('x', props.width - 0.1 * margins.r)
-        .attr('y', margins.t)
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.4 * margins.r)
+        .attr('y', 0)
         .attr('dy', '8em')
-        .text(`$${(cost + gain - loss).toFixed(2)}`);
-    }
+        .text(`net`);
 
+        // net absolute number
+        tablegroup.append('text')
+        .attr('class', 'table-elem')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', 0.9 * margins.r)
+        .attr('y', 0)
+        .attr('dy', '8em')
+        .text(`${(cost + gain - loss).toFixed(0)}`);
+    }
 };
 
 
@@ -249,5 +341,15 @@ watch(() => props.holding, drawChart);
     <svg ref='chart'></svg>
 </template>
 
-<style scoped>
+<style>
+
+.chart-annotation {
+    font-size: small;
+}
+.table-elem {
+    font-size: small;
+}
+.xlabel, .ylabel {
+    font-size: medium;
+}
 </style>
