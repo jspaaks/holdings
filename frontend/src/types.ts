@@ -12,6 +12,9 @@ export type Holding = {
     id: string;
     max_price: number;
     min_price: number;
-    previous_close: number;
+    previous_close: {
+        price: number;
+        t: number;
+    };
     shares: number;
 };
