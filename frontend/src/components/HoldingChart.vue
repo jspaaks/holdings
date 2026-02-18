@@ -58,7 +58,7 @@ const drawChart = () => {
 
     const margins = {
         b: 60,
-        t: 60,
+        t: 50,
         l: 100,
         r: 230,
     };
@@ -142,7 +142,7 @@ const drawChart = () => {
     // title
     chartgroup.append('g')
     .attr('id', 'title')
-    .attr('transform', `translate(${(props.width - margins.l - margins.r) / 2}, ${-0.5 * margins.t})`)
+    .attr('transform', `translate(${(props.width - margins.l - margins.r) / 2}, ${-0.5 * margins.t + 3})`)
     .append('text')
     .attr('class', 'title')
     .attr('text-anchor', 'middle')

@@ -25,4 +25,9 @@ const holdings = await fetchDataFromLocalhost('http://localhost:3000');
 </template>
 
 <style scoped>
+    div {
+        margin: 0;
+        display: flex;
+        place-items: center;
+    }
 </style>
