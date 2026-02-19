@@ -136,7 +136,7 @@ class Holdings:
 
 
 def cli():
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 2 or sys.argv[1] in ['-h', '--help']:
         print(
             "Usage: process-holdings FILENAME\n" +
             "\n" +
