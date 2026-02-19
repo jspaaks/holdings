@@ -97,16 +97,69 @@ const drawChart = () => {
     .attr('fill', '#fff')
 
     // bars
-    chartgroup.append('g')
-    .attr('id', 'barsgroup')
-    .selectAll('rect')
-    .data(buys)
-    .join('rect') // 'join' handles enter, update, and exit
-    .attr('x', t => x(t.shares_acc))
-    .attr('y', t => y(t.price))
-    .attr('width', t => x(t.shares))
-    .attr('height', t => y(yLims[0]) - y(t.price))
-    .attr('fill', 'steelblue');
+    if (previous_close) {
+        // cost rects for profitable bars
+        chartgroup.append('g')
+        .attr('id', 'profitables-cost-group')
+        .selectAll('rect')
+        .data(buys.filter(b => b.price < previous_close.price))
+        .join('rect')
+        .attr('x', b => x(b.shares_acc))
+        .attr('y', b => y(b.price))
+        .attr('width', b => x(b.shares))
+        .attr('height', b => y(yLims[0]) - y(b.price))
+        .attr('fill', 'sandybrown');
+
+        // cost rects for unprofitable bars
+        chartgroup.append('g')
+        .attr('id', 'unprofitables-cost-group')
+        .selectAll('rect')
+        .data(buys.filter(b => b.price > previous_close.price))
+        .join('rect')
+        .attr('x', b => x(b.shares_acc))
+        .attr('y', b => y(previous_close.price))
+        .attr('width', b => x(b.shares))
+        .attr('height', y(yLims[0]) - y(previous_close.price))
+        .attr('fill', 'sandybrown');
+
+        // gains bars
+        chartgroup.append('g')
+        .attr('id', 'profitables-gain-group')
+        .selectAll('rect')
+        .data(buys.filter(b => b.price < previous_close.price))
+        .join('rect')
+        .attr('x', b => x(b.shares_acc))
+        .attr('y', y(previous_close.price))
+        .attr('width', b => x(b.shares))
+        .attr('height', b => y(b.price) - y(previous_close.price))
+        .attr('fill', 'lightgreen')
+
+        // losses bars
+        chartgroup.append('g')
+        .attr('id', 'unprofitables-loss-group')
+        .selectAll('rect')
+        .data(buys.filter(b => b.price > previous_close.price))
+        .join('rect')
+        .attr('x', b => x(b.shares_acc))
+        .attr('y', b => y(b.price))
+        .attr('width', b => x(b.shares))
+        .attr('height', b => y(previous_close.price) - y(b.price))
+        .attr('fill', 'lightcoral')
+
+    } else {
+
+        // cost bars
+        chartgroup.append('g')
+        .attr('id', 'cost-group')
+        .selectAll('rect')
+        .data(buys)
+        .join('rect')
+        .attr('x', b => x(b.shares_acc))
+        .attr('y', b => y(b.price))
+        .attr('width', b => x(b.shares))
+        .attr('height', b => y(yLims[0]) - y(b.price))
+        .attr('fill', 'sandybrown');
+    }
 
     // x axis
     chartgroup.append('g')
