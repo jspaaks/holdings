@@ -14,13 +14,13 @@ Visualization of current holdings based on Vanguard downloadable CSV data
 
 ## Backend
 
-Use a spreadsheet program like Excel or LibreOffice Calc to remove the first rows of the download CSV file `OfxDownload.csv`, such that it starts with row headers `Account Number`, `Trade Date`, `Settlement Date`, etc. Save this file as e.g. `data/transactions.csv`
-
-Change directory into `backend/`
+Change directory into `backend/`.
 
 ```console
 $ cd backend
 ```
+
+Download the transactions spreadsheet from Vanguard, then use a spreadsheet program like Excel or LibreOffice Calc to remove the first rows of the downloaded CSV file `OfxDownload.csv`, such that it starts with row headers `Account Number`, `Trade Date`, `Settlement Date`, etc. Save this file as e.g. `data/transactions.csv`.
 
 Create a Python virtual environment
 ```console
@@ -42,6 +42,16 @@ Start processing the data from the CSV file
 
 ```console
 $ process-holdings ./data/transactions.csv > ./data/db.json
+```
+
+For reference, `process-holdings` has a help text as well:
+
+```console
+$ process-holdings --help
+Usage: process-holdings FILENAME
+
+   FILENAME   Name of the file that contains the Vanguard
+              transactions for each of your holdings
 ```
 
 Deactivate Python environment, don't need it anymore
