@@ -112,12 +112,12 @@ const drawChart = () => {
     chartgroup.append('g')
     .attr('id', 'xaxis')
     .attr('transform', `translate(0,${props.height - margins.b - margins.t})`)
-    .call(d3.axisBottom(x));
+    .call(d3.axisBottom(x).ticks(5));
 
     // y axis
     chartgroup.append('g')
     .attr('id', 'yaxis')
-    .call(d3.axisLeft(y));
+    .call(d3.axisLeft(y).ticks(5));
 
     // xlabel
     chartgroup.append('g')
@@ -176,7 +176,7 @@ const drawChart = () => {
     // table group
     const tablegroup = svg.append('g')
     .attr('id', 'tablegroup')
-    .attr('transform', `translate(${props.width - margins.r},${margins.t+ 20})`)
+    .attr('transform', `translate(${props.width - margins.r},${margins.t + 40})`)
 
     // '%' text
     tablegroup.append('text')
@@ -205,7 +205,7 @@ const drawChart = () => {
     .attr('dominant-baseline', 'middle')
     .attr('x', 0.4 * margins.r)
     .attr('y', 0)
-    .attr('dy', '2em')
+    .attr('dy', '1.5em')
     .text('cost');
 
     // cost absolute number
@@ -215,7 +215,7 @@ const drawChart = () => {
     .attr('dominant-baseline', 'middle')
     .attr('x', 0.9 * margins.r)
     .attr('y', 0)
-    .attr('dy', '2em')
+    .attr('dy', '1.5em')
     .text(`${cost.toFixed(0)}`);
 
     if (previous_close) {
@@ -254,7 +254,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.4 * margins.r)
         .attr('y', 0)
-        .attr('dy', '4em')
+        .attr('dy', '3em')
         .text('gain');
 
         // gain percent
@@ -264,7 +264,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.625 * margins.r)
         .attr('y', 0)
-        .attr('dy', '4em')
+        .attr('dy', '3em')
         .text(`${(100 * gain / cost).toFixed(1)}`);
 
         // gain absolute number
@@ -274,7 +274,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.9 * margins.r)
         .attr('y', 0)
-        .attr('dy', '4em')
+        .attr('dy', '3em')
         .text(`${gain.toFixed(0)}`);
 
         // loss text
@@ -284,7 +284,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.4 * margins.r)
         .attr('y', 0)
-        .attr('dy', '6em')
+        .attr('dy', '4.5em')
         .text(`loss`);
 
         // loss percent
@@ -294,7 +294,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.625 * margins.r)
         .attr('y', 0)
-        .attr('dy', '6em')
+        .attr('dy', '4.5em')
         .text(`${(100 * loss / cost).toFixed(1)}`);
 
         // loss absolute number
@@ -304,7 +304,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.9 * margins.r)
         .attr('y', 0)
-        .attr('dy', '6em')
+        .attr('dy', '4.5em')
         .text(`${loss.toFixed(0)}`);
 
         // net text
@@ -314,7 +314,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.4 * margins.r)
         .attr('y', 0)
-        .attr('dy', '8em')
+        .attr('dy', '6em')
         .text(`net`);
 
         // net absolute number
@@ -324,7 +324,7 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', 0.9 * margins.r)
         .attr('y', 0)
-        .attr('dy', '8em')
+        .attr('dy', '6em')
         .text(`${(cost + gain - loss).toFixed(0)}`);
     }
 };
