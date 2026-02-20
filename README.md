@@ -32,7 +32,8 @@ Activate the Python virtual environment
 $ source venv/bin/activate
 ```
 
-Install dependencies and create command alias `process-holdings`
+Install dependencies and create command aliases `process-holdings` and `get-pricing`, both of which
+we will use in a moment
 
 ```console
 $ pip install .
@@ -54,17 +55,36 @@ Usage: process-holdings FILENAME
               transactions for each of your holdings
 ```
 
-Deactivate Python environment, don't need it anymore
+In a second terminal, start the JSON file server and let it watch for changes to the file
 
 ```console
-$ deactivate
+$ ./node_modules/.bin/json-server data/db.json --port 3458  # or another port of your choosing
 ```
 
-Start the JSON file server and let it watch for changes to the file
+In order to show the previous day's closing prices in each graph, you can retrieve pricing data
+from `api.massive.com`. This requires that you have an API key, which you can get by registering for
+a free account on `massive.com`. Once you have the key, go back to the first terminal, create an
+environment variable `API_KEY_MASSIVE` whose value is the key, like so:
 
 ```console
-$ ./node_modules/.bin/json-server data/db.json
+export API_KEY_MASSIVE=<your api key>
 ```
+
+Then run
+
+```console
+$ get-pricing http://localhost:3458
+```
+
+assuming that port 3458 is where json-server is hosted.
+
+It should output some text, and update the `data/db.json` file with the pricing information for the
+previous trading day.
+
+Now open your browser to `http://localhost:5173` or wherever you told Vite you want to host the
+frontend. It should show images like this for each of the holdings from you transactions file:
+
+![example of holding](sample.png)
 
 ## Frontend (dev setup)
 
