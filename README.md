@@ -12,6 +12,12 @@ Visualization of current holdings based on Vanguard downloadable CSV data
     1. Python data processing using Pandas to wrangle CSV to JSON
     1. json-server mocked server
 
+## Frontend (dev setup)
+
+```console
+$ npm run dev
+```
+
 ## Backend
 
 Change directory into `backend/`.
@@ -85,9 +91,3 @@ Now open your browser to `http://localhost:5173` or wherever you told Vite you w
 frontend. It should show images like this for each of the holdings from you transactions file:
 
 ![example of holding](sample.png)
-
-## Frontend (dev setup)
-
-```console
-$ npm run dev
-```
