@@ -4,7 +4,7 @@ backend/.idea
 backend/build
 backend/data
 backend/node_modules
-backend/__pycache__
+**/__pycache__
 backend/venv
 frontend/node_modules
 
