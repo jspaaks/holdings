@@ -71,7 +71,7 @@ class Holdings:
             raise e
 
         # select only those rows that represent a buy or a sell
-        df = df.query('Transaction Type == "Buy" or Transaction Type == "Sell"')
+        df = df.query('`Transaction Type` == "Buy" or `Transaction Type` == "Sell"')
 
         # rename the column labels
         columns = {
