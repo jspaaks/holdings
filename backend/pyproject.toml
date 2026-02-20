@@ -18,6 +18,8 @@ classifiers = [
 ]
 dependencies = [
     "pandas >= 3.0, <4",
+    "requests >= 2.0, <3",
+    "tenacity >= 9.0, <10",
 ]
 description = "Data processing for Vanguard CSV file"
 keywords = [
@@ -43,3 +45,4 @@ where = ["src"]
 
 [project.scripts]
 process-holdings = "holdings.process:cli"
+get-prices = "holdings.get_prices:cli"
