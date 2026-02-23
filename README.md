@@ -84,6 +84,15 @@ $ get-pricing http://localhost:3458
 
 assuming that port 3458 is where json-server is hosted.
 
+For reference, `get-prices` also has a `--help`:
+
+```console
+$ get-prices --help
+Usage: get-prices <URL>
+
+   <URL>     URL for the holdings database server
+```
+
 It should output some text, and update the `data/db.json` file with the pricing information for the
 previous trading day.
 
