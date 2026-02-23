@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Holding } from '../types';
 import HoldingChart from './HoldingChart.vue';
+import HoldingTable from './HoldingTable.vue';
 
 const fetchDataFromLocalhost = async (url: string) => {
     try {
@@ -21,6 +22,7 @@ const holdings = await fetchDataFromLocalhost('http://localhost:3000');
 <template>
     <div v-for='holding in holdings' :key='holding.id'>
         <HoldingChart v-bind:holding='holding'/>
+        <HoldingTable v-bind:holding='holding'/>
     </div>
 </template>
 
@@ -29,5 +31,7 @@ const holdings = await fetchDataFromLocalhost('http://localhost:3000');
         margin: 0;
         display: flex;
         place-items: center;
+        background-color: #ddd;
+        min-width: 600px;
     }
 </style>

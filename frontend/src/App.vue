@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue';
 const AsyncHoldings = defineAsyncComponent(() =>
-    import('./components/HoldingCharts.vue')
+    import('./components/Holdings.vue')
 );
 </script>
 
