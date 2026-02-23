@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import sys
+import time
 from typing import List
 import requests
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_result
@@ -27,7 +28,12 @@ def get_symbols(url: str) -> List[str]:
     response = requests.get(f'{url}/holdings')
     response.raise_for_status()
     holdings = response.json()
-    return [h['id'] for h in holdings if h['previous_close'] is None]
+    epochms = int(time.time()) * 1000
+    ids = []
+    for h in holdings:
+        if h['previous_close'] is None or epochms - h['previous_close']['t'] > 24 * 60 * 60 * 1000:
+            ids.append(h['id'])
+    return ids
 
 
 def get_previous_close(symbol: str, apikey: str) -> dict[str, int]:
