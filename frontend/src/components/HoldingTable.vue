@@ -24,52 +24,56 @@ const {gain, loss} = calcGainsAndLosses(buys, previous_close.price)
 
 <template>
     <table>
-        <tr>
-            <th></th>
-            <th class="align-right">%</th>
-            <th class="align-right">$</th>
-        </tr>
+        <thead>
+            <tr>
+                <th></th>
+                <th class="align-right">%</th>
+                <th class="align-right">$</th>
+            </tr>
+        </thead>
 
-        <tr>
-            <td class="align-left">cost</td>
-            <td class="align-right"></td>
-            <td class="align-right">{{ cost.toFixed(0) }}</td>
-        </tr>
+        <tbody>
+            <tr>
+                <td class="align-left">cost</td>
+                <td class="align-right"></td>
+                <td class="align-right">{{ cost.toFixed(0) }}</td>
+            </tr>
 
-        <tr>
-            <td class="align-left">gain</td>
-            <td class="align-right">{{ (100 * gain / cost).toFixed(1) }}</td>
-            <td class="align-right">{{ gain.toFixed(0) }}</td>
-        </tr>
+            <tr>
+                <td class="align-left">gain</td>
+                <td class="align-right">{{ (100 * gain / cost).toFixed(1) }}</td>
+                <td class="align-right">{{ gain.toFixed(0) }}</td>
+            </tr>
 
-        <tr>
-            <td class="align-left">loss</td>
-            <td class="align-right">{{ (100 * loss / cost).toFixed(1) }}</td>
-            <td class="align-right">{{ loss.toFixed(0) }}</td>
-        </tr>
+            <tr>
+                <td class="align-left">loss</td>
+                <td class="align-right">{{ (100 * loss / cost).toFixed(1) }}</td>
+                <td class="align-right">{{ loss.toFixed(0) }}</td>
+            </tr>
 
-        <tr>
-            <td class="align-left">net</td>
-            <td class="align-right">{{ (100 * (gain - loss) / cost).toFixed(1) }}</td>
-            <td class="align-right">{{ (gain-loss).toFixed(0) }}</td>
-        </tr>
+            <tr>
+                <td class="align-left">net</td>
+                <td class="align-right">{{ (100 * (gain - loss) / cost).toFixed(1) }}</td>
+                <td class="align-right">{{ (gain-loss).toFixed(0) }}</td>
+            </tr>
 
-        <tr>
-            <td class="align-left">value</td>
-            <td class="align-right"></td>
-            <td class="align-right">{{ (cost + gain - loss).toFixed(0) }}</td>
-        </tr>
+            <tr>
+                <td class="align-left">value</td>
+                <td class="align-right"></td>
+                <td class="align-right">{{ (cost + gain - loss).toFixed(0) }}</td>
+            </tr>
+        </tbody>
     </table>
 </template>
 
 <style scoped>
 
 table {
-    width: 100%;
+    min-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
     background-color: #ddd;
     font-size: small;
-    margin-left: 20px;
-    margin-right: 20px;
 }
 
 .align-right {
@@ -87,12 +91,15 @@ td, th {
     padding-bottom: 0.2em;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2; /* A light gray background color */
+thead tr {
+    background-color: transparent;
 }
 
-/* Optional: You can also style odd rows for a complete striped effect */
-tr:nth-child(odd) {
-  background-color: #ffffff; /* White background for odd rows */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff;
 }
 </style>
