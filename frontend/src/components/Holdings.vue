@@ -28,10 +28,10 @@ const holdings = await fetchDataFromLocalhost('http://localhost:3000');
 
 <style scoped>
     div {
-        margin: 0;
-        display: flex;
-        place-items: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        padding-right: 15px;
         background-color: #ddd;
-        min-width: 600px;
     }
 </style>
