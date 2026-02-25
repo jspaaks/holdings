@@ -26,7 +26,7 @@ const calcYLims = (min_price: number, max_price: number, previous_close_price?: 
 const drawChart = () => {
 
     const showCostBarTitle = (b: Buy) => {
-        return `cost: ${b.shares} @ $${(b.price).toFixed(2)} = $${(b.shares * b.price).toFixed(2)} on ${b.date}`;
+        return `cost: ${Number.isInteger(b.shares) ? b.shares : b.shares.toFixed(3)} @ $${(b.price).toFixed(2)} = $${(b.shares * b.price).toFixed(2)} on ${b.date}`;
     }
 
     let {
@@ -176,7 +176,7 @@ const drawChart = () => {
     // ylabel
     chartgroup.append('g')
         .attr('id', 'ylabel')
-        .attr('transform', `translate(${-0.5 * margins.l}, ${(height - margins.b - margins.t) / 2}) rotate(-90)`)
+        .attr('transform', `translate(${-0.6 * margins.l}, ${(height - margins.b - margins.t) / 2}) rotate(-90)`)
         .append('text')
             .attr('class', 'ylabel')
             .attr('text-anchor', 'middle')
