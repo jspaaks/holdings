@@ -6,7 +6,7 @@ const AsyncHoldings = defineAsyncComponent(() =>
 </script>
 
 <template>
-    <div class="flexed">
+    <div class="gridded">
         <Suspense>
             <template #default>
                 <AsyncHoldings />
@@ -16,9 +16,9 @@ const AsyncHoldings = defineAsyncComponent(() =>
 </template>
 
 <style scoped>
-    .flexed {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2px;
+    .gridded {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 3px;
     }
 </style>
