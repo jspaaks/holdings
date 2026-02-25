@@ -1,16 +1,23 @@
 import json
 import os
 import sys
+from pathlib import Path
 import pandas as pd
 
 
 class Holdings:
 
     def __init__(self, input_filepath: str | os.PathLike):
+        self._sheet = None
         self._holdings = None
-        self._read_transactions_from_csv(input_filepath)
-        self._sort_by_date()
-        self._remove_transactions_fifo()
+        self._net_invested = None
+
+        self._read_from_csv(input_filepath)
+        self._rename_sheet_column_labels()
+        self._calc_total_funds_received()
+        self._calc_holdings()
+        self._sort_holdings_by_date()
+        self._remove_holdings_fifo()
         self._calc_cost()
         self._calc_shares()
         self._calc_shares_acc()
@@ -22,7 +29,8 @@ class Holdings:
     def __str__(self):
         return json.dumps({
             '$schema': 'schema.json',
-            'holdings': self._holdings
+            'holdings': self._holdings,
+            'net_invested': self._net_invested
         }, sort_keys=True, indent=4)
 
     def _add_previous_close_placeholder(self):
@@ -58,34 +66,39 @@ class Holdings:
                 b['shares_acc'] = acc
                 acc += b['shares']
 
-    def _read_transactions_from_csv(self, filepath: str | os.PathLike):
-        # initialize _holdings
-        self._holdings = []
+    def _calc_total_funds_received(self):
+        selected = self._sheet.query('`type` == "Funds Received" or `type` == "Funds Transferred Out"')
+        self._net_invested = selected['amount'].sum()
 
-        # try reading csv transaction data from file
-        try:
-            usecols = ['Trade Date', 'Transaction Type', 'Symbol', 'Shares', 'Share Price']
-            df = pd.read_csv(filepath, usecols=usecols)
-        except FileNotFoundError as e:
-            print(f"Error: The file '{filepath}' was not found.")
-            raise e
+    def _read_from_csv(self, filepath: str | os.PathLike):
+        filepath = Path(filepath)
+        if not filepath.is_file():
+            raise FileNotFoundError(f"File not found: '{filepath}'")
 
-        # select only those rows that represent a buy or a sell
-        df = df.query('`Transaction Type` == "Buy" or `Transaction Type` == "Sell"')
+        usecols = ['Trade Date', 'Transaction Type', 'Symbol', 'Shares', 'Share Price', 'Net Amount']
+        self._sheet = pd.read_csv(filepath, usecols=usecols)
 
-        # rename the column labels
+    def _rename_sheet_column_labels(self):
         columns = {
             'Trade Date': 'date',
             'Transaction Type': 'type',
             'Symbol': 'ticker',
             'Shares': 'shares',
-            'Share Price': 'price'
+            'Share Price': 'price',
+            'Net Amount': 'amount',
         }
-        df = df.rename(columns=columns)
+        self._sheet.rename(columns=columns, inplace=True)
 
+    def _calc_holdings(self):
         # group by ticker symbol and wrangle transactions into an array
         # of dict where key `id` represents ticker symbol
-        grouped = df.groupby('ticker')
+        self._holdings = []
+
+        # select only those rows that represent a buy or a sell and group them by ticker symbol
+        grouped = self._sheet\
+            .query('`type` == "Buy" or `type` == "Sell"')\
+            .groupby('ticker')
+
         for index, (ticker, group) in enumerate(grouped):
             transactions = group.to_dict(orient='records')
             for t in transactions:
@@ -98,7 +111,7 @@ class Holdings:
                 'transactions': transactions
             })
 
-    def _remove_transactions_fifo(self):
+    def _remove_holdings_fifo(self):
         for holding in self._holdings:
             shares_sold = sum(t['shares'] for t in holding['transactions'] if t['type'] == 'SELL')
             if shares_sold == 0:
@@ -129,7 +142,7 @@ class Holdings:
         # remove holdings that have no buys
         self._holdings = list(filter(lambda h: h['buys'], self._holdings))
 
-    def _sort_by_date(self):
+    def _sort_holdings_by_date(self):
         for holding in self._holdings:
             holding['transactions'].sort(key=lambda t: t['date'])
         return self
