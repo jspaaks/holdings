@@ -10,7 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_result
 def is_too_many_requests(response):
     too_many_requests = isinstance(response, requests.Response) and response.status_code == 429
     if too_many_requests:
-        print(f'{datetime.now()} -- Too many requests, trying again in a moment')
+        print(f'{datetime.now()} -- Too many requests, will resume in a moment')
     return too_many_requests
 
 
