@@ -12,21 +12,69 @@ Visualization of current holdings based on Vanguard downloadable CSV data
     1. Python data processing using Pandas to wrangle CSV to JSON
     1. json-server mocked server
 
+We're going to need 3 terminals, one for hosting the frontend, one for hosting the data, and a
+third one for processing the data.
+
 ## Frontend (dev setup)
+
+Open a new terminal and change directory into `frontend/`.
+
+```console
+$ cd frontend
+```
+
+Install the dependencies
+
+```console
+$ npm install
+```
+
+Start hosting the frontend
 
 ```console
 $ npm run dev
 ```
 
+Note that there is nothing to see yet at `http://localhost:5173` or whatever other port you told
+Vite to start hosting the frontend. Additionally the browser console should show an error about not
+being able to find `http://localhost:3000/holdings`.
+
+Further note that this setup is not secure, but that's OK as long as you're just running this app
+locally on your own machine.
+
 ## Backend
 
-Change directory into `backend/`.
+Open a new terminal, change directory into `backend/`.
 
 ```console
 $ cd backend
 ```
 
-Download the transactions spreadsheet `OfxDownload.csv` from Vanguard's Download Center.
+Install the dependencies for running `json-server`:
+
+```console
+$ npm install
+```
+
+Create an empty file that will hold the data as JSON:
+
+```console
+$ touch data/db.json
+```
+
+Start the JSON file server and let it watch for changes to file `data/db.json`. 
+
+```console
+$ ./node_modules/.bin/json-server data/db.json --port 3000  # or another port of your choosing
+```
+
+## Processing
+
+Open a new terminal, change directory into `backend/` if necessary.
+
+```console
+$ cd backend
+```
 
 Create a Python virtual environment
 ```console
@@ -38,14 +86,18 @@ Activate the Python virtual environment
 $ source venv/bin/activate
 ```
 
-Install dependencies and create command aliases `process-holdings` and `get-pricing`, both of which
+Install dependencies and create command aliases `process-holdings` and `get-prices`, both of which
 we will use in a moment
 
 ```console
 $ pip install .
 ```
 
-Start processing the data from the CSV file
+Download the transactions spreadsheet `OfxDownload.csv` from Vanguard's Download Center, and save
+it for example as `data/OfxDownload.csv`. Then, start processing the data from the CSV file and let
+the script pipe its results to a new file, `data/db.json`.
+
+#### `process-holdings`
 
 ```console
 $ process-holdings ./data/OfxDownload.csv > ./data/db.json
@@ -61,11 +113,7 @@ Usage: process-holdings FILENAME
               transactions for each of your holdings
 ```
 
-In a second terminal, start the JSON file server and let it watch for changes to the file
-
-```console
-$ ./node_modules/.bin/json-server data/db.json --port 3458  # or another port of your choosing
-```
+#### `get-prices`
 
 In order to show the previous day's closing prices in each graph, you can retrieve pricing data
 from `api.massive.com`. This requires that you have an API key, which you can get by registering for
@@ -79,10 +127,10 @@ export API_KEY_MASSIVE=<your api key>
 Then run
 
 ```console
-$ get-pricing http://localhost:3458
+$ get-prices http://localhost:3000
 ```
 
-assuming that port 3458 is where json-server is hosted.
+assuming that port 3000 is where `json-server` is hosting the data.
 
 For reference, `get-prices` also has a `--help`:
 
