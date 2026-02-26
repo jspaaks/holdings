@@ -1,21 +1,24 @@
 # Holdings
 
-Visualization of current holdings based on Vanguard downloadable CSV data
+Visualization of current holdings based on Vanguard downloadable CSV data file, `OfxDownload.csv`.
 
 ## Stack
 
 - frontend
-    1. Vue
-    1. Vite
+    1. Vue 3 - Single Page App
+    1. D3 - plotting
+    1. Vite - building
     1. TypeScript
 - backend
-    1. Python data processing using Pandas to wrangle CSV to JSON
     1. json-server mocked server
+    1. Python data processing using Pandas to wrangle CSV to JSON
+
+## Installing
 
 We're going to need 3 terminals, one for hosting the frontend, one for hosting the data, and a
 third one for processing the data.
 
-## Frontend (dev setup)
+### Frontend (dev setup)
 
 Open a new terminal and change directory into `frontend/`.
 
@@ -42,7 +45,7 @@ being able to find `http://localhost:3000/holdings`.
 Further note that this setup is not secure, but that's OK as long as you're just running this app
 locally on your own machine.
 
-## Backend
+### Backend
 
 Open a new terminal, change directory into `backend/`.
 
@@ -68,7 +71,7 @@ Start the JSON file server and let it watch for changes to file `data/db.json`.
 $ ./node_modules/.bin/json-server data/db.json --port 3000  # or another port of your choosing
 ```
 
-## Processing
+### Processing
 
 Open a new terminal, change directory into `backend/` if necessary.
 
