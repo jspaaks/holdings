@@ -6,10 +6,19 @@ const props = defineProps<{
 }>();
 
 
-const calcGainsAndLosses = (buys: Buy[], price: number) => {
+const calcGainsAndLosses = (buys: Buy[], price?: number) => {
     const sum = (arr: number[]) => arr.reduce((acc: number, curr: number) => acc + curr, 0)
+
+    if (price === undefined) {
+        return {
+            gain: undefined,
+            loss: undefined
+        }
+    }
+
     const gains = buys.filter(b => price > b.price)
     const losses = buys.filter(b => price < b.price)
+
     return {
         gain: sum(gains.map(g => (price - g.price) * g.shares)),
         loss: sum(losses.map(l => (l.price - price) * l.shares))
@@ -18,7 +27,7 @@ const calcGainsAndLosses = (buys: Buy[], price: number) => {
 
 let { buys, cost, previous_close } = props.holding
 
-const {gain, loss} = calcGainsAndLosses(buys, previous_close.price)
+const {gain, loss} = calcGainsAndLosses(buys, previous_close ? previous_close.price : undefined)
 
 </script>
 
@@ -41,26 +50,26 @@ const {gain, loss} = calcGainsAndLosses(buys, previous_close.price)
 
             <tr>
                 <td class="align-left">gain</td>
-                <td class="align-right">{{ (100 * gain / cost).toFixed(1) }}</td>
-                <td class="align-right">{{ gain.toFixed(0) }}</td>
+                <td class="align-right">{{ gain ? (100 * gain / cost).toFixed(1) : '?' }}</td>
+                <td class="align-right">{{ gain ? gain.toFixed(0) : '?' }}</td>
             </tr>
 
             <tr>
                 <td class="align-left">loss</td>
-                <td class="align-right">{{ (100 * loss / cost).toFixed(1) }}</td>
-                <td class="align-right">{{ loss.toFixed(0) }}</td>
+                <td class="align-right">{{ loss ? (100 * loss / cost).toFixed(1) : '?' }}</td>
+                <td class="align-right">{{ loss ? loss.toFixed(0) : '?' }}</td>
             </tr>
 
             <tr>
                 <td class="align-left">net</td>
-                <td class="align-right">{{ (100 * (gain - loss) / cost).toFixed(1) }}</td>
-                <td class="align-right">{{ (gain-loss).toFixed(0) }}</td>
+                <td class="align-right">{{ gain && loss ? (100 * (gain - loss) / cost).toFixed(1) : '?' }}</td>
+                <td class="align-right">{{ gain && loss ? (gain - loss).toFixed(0) : '?' }}</td>
             </tr>
 
             <tr>
                 <td class="align-left">value</td>
                 <td class="align-right"></td>
-                <td class="align-right">{{ (cost + gain - loss).toFixed(0) }}</td>
+                <td class="align-right">{{ gain && loss ? (cost + gain - loss).toFixed(0) : '?' }}</td>
             </tr>
         </tbody>
     </table>
