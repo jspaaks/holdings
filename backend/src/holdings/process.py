@@ -8,10 +8,12 @@ import pandas as pd
 class Holdings:
 
     def __init__(self, input_filepath: str | os.PathLike):
+        self._skiprows = None
         self._sheet = None
         self._holdings = None
         self._net_invested = None
 
+        self._calc_skiprows(input_filepath)
         self._read_from_csv(input_filepath)
         self._rename_sheet_column_labels()
         self._calc_total_funds_received()
@@ -66,6 +68,18 @@ class Holdings:
                 b['shares_acc'] = acc
                 acc += b['shares']
 
+    def _calc_skiprows(self, input_filepath):
+        self._skiprows = 0
+        with open(input_filepath, 'r') as fid:
+            for line in fid:
+                if line == '\n':
+                    break
+                self._skiprows += 1
+            for line in fid:
+                if line != '\n':
+                    break
+                self._skiprows += 1
+
     def _calc_total_funds_received(self):
         selected = self._sheet.query('`type` == "Funds Received" or `type` == "Funds Transferred Out"')
         self._net_invested = selected['amount'].sum()
@@ -76,7 +90,7 @@ class Holdings:
             raise FileNotFoundError(f"File not found: '{filepath}'")
 
         usecols = ['Trade Date', 'Transaction Type', 'Symbol', 'Shares', 'Share Price', 'Net Amount']
-        self._sheet = pd.read_csv(filepath, usecols=usecols)
+        self._sheet = pd.read_csv(filepath, usecols=usecols, skiprows=self._skiprows)
 
     def _rename_sheet_column_labels(self):
         columns = {

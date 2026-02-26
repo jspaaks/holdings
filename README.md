@@ -26,7 +26,7 @@ Change directory into `backend/`.
 $ cd backend
 ```
 
-Download the transactions spreadsheet from Vanguard, then use a spreadsheet program like Excel or LibreOffice Calc to remove the first rows of the downloaded CSV file `OfxDownload.csv`, such that it starts with row headers `Account Number`, `Trade Date`, `Settlement Date`, etc. Save this file as e.g. `data/transactions.csv`.
+Download the transactions spreadsheet `OfxDownload.csv` from Vanguard's Download Center.
 
 Create a Python virtual environment
 ```console
@@ -48,7 +48,7 @@ $ pip install .
 Start processing the data from the CSV file
 
 ```console
-$ process-holdings ./data/transactions.csv > ./data/db.json
+$ process-holdings ./data/OfxDownload.csv > ./data/db.json
 ```
 
 For reference, `process-holdings` has a help text as well:
