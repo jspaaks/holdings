@@ -1,12 +1,12 @@
 <script setup lang='ts'>
-import type { Holding, Buy } from '../types'
+import type { Holding, Lot } from '../types'
 
 const props = defineProps<{
     holding: Holding
 }>();
 
 
-const calcGainsAndLosses = (buys: Buy[], price?: number) => {
+const calcGainsAndLosses = (lots: Lot[], price?: number) => {
     const sum = (arr: number[]) => arr.reduce((acc: number, curr: number) => acc + curr, 0)
 
     if (price === undefined) {
@@ -16,8 +16,8 @@ const calcGainsAndLosses = (buys: Buy[], price?: number) => {
         }
     }
 
-    const gains = buys.filter(b => price > b.price)
-    const losses = buys.filter(b => price < b.price)
+    const gains = lots.filter(ell => price > ell.price)
+    const losses = lots.filter(ell => price < ell.price)
 
     return {
         gain: sum(gains.map(g => (price - g.price) * g.shares)),
@@ -25,9 +25,9 @@ const calcGainsAndLosses = (buys: Buy[], price?: number) => {
     }
 }
 
-let { buys, cost, previous_close } = props.holding
+let { lots, cost, previous_close } = props.holding
 
-const {gain, loss} = calcGainsAndLosses(buys, previous_close ? previous_close.price : undefined)
+const {gain, loss} = calcGainsAndLosses(lots, previous_close ? previous_close.price : undefined)
 
 </script>
 

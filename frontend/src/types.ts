@@ -1,12 +1,13 @@
-export type Buy = {
+export type Lot = {
     date: string;
+    order: number;
     price: number;
     shares: number;
     shares_acc: number;
 };
 
 export type Holding = {
-    buys: Buy[];
+    lots: Lot[];
     cost: number;
     cost_per_share: number;
     id: string;

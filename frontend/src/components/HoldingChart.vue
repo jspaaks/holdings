@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import type { Holding, Buy } from '../types';
+import type { Holding, Lot } from '../types';
 import { onMounted, ref, watch } from 'vue';
 import * as d3 from 'd3';
 
@@ -25,12 +25,12 @@ const calcYLims = (min_price: number, max_price: number, previous_close_price?: 
 
 const drawChart = () => {
 
-    const showCostBarTitle = (b: Buy) => {
-        return `cost: ${Number.isInteger(b.shares) ? b.shares : b.shares.toFixed(3)} @ $${(b.price).toFixed(2)} = $${(b.shares * b.price).toFixed(2)} on ${b.date}`;
+    const showCostBarTitle = (ell: Lot) => {
+        return `cost: ${Number.isInteger(ell.shares) ? ell.shares : ell.shares.toFixed(3)} @ $${(ell.price).toFixed(2)} = $${(ell.shares * ell.price).toFixed(2)} on ${ell.date}`;
     }
 
     let {
-        buys,
+        lots,
         cost_per_share,
         id: ticker,
         max_price,
@@ -85,12 +85,12 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'profitables-cost-group')
         .selectAll('rect')
-            .data(buys.filter(b => b.price < previous_close.price))
+            .data(lots.filter(ell => ell.price < previous_close.price))
             .join('rect')
-            .attr('x', b => x(b.shares_acc))
-            .attr('y', b => y(b.price))
-            .attr('width', b => x(b.shares))
-            .attr('height', b => y(yLims[0]) - y(b.price))
+            .attr('x', ell => x(ell.shares_acc))
+            .attr('y', ell => y(ell.price))
+            .attr('width', ell => x(ell.shares))
+            .attr('height', ell => y(yLims[0]) - y(ell.price))
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
@@ -99,11 +99,11 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'unprofitables-cost-group')
         .selectAll('rect')
-            .data(buys.filter(b => b.price >= previous_close.price))
+            .data(lots.filter(ell => ell.price >= previous_close.price))
             .join('rect')
-            .attr('x', b => x(b.shares_acc))
+            .attr('x', ell => x(ell.shares_acc))
             .attr('y', y(previous_close.price))
-            .attr('width', b => x(b.shares))
+            .attr('width', ell => x(ell.shares))
             .attr('height', y(yLims[0]) - y(previous_close.price))
             .attr('fill', 'sandybrown')
             .append('title')
@@ -113,24 +113,24 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'profitables-gain-group')
         .selectAll('rect')
-            .data(buys.filter(b => b.price < previous_close.price))
+            .data(lots.filter(ell => ell.price < previous_close.price))
             .join('rect')
-            .attr('x', b => x(b.shares_acc))
+            .attr('x', ell => x(ell.shares_acc))
             .attr('y', y(previous_close.price))
-            .attr('width', b => x(b.shares))
-            .attr('height', b => y(b.price) - y(previous_close.price))
+            .attr('width', ell => x(ell.shares))
+            .attr('height', ell => y(ell.price) - y(previous_close.price))
             .attr('fill', 'lightgreen')
 
         // losses bars
         chartgroup.append('g')
         .attr('id', 'unprofitables-loss-group')
         .selectAll('rect')
-            .data(buys.filter(b => b.price >= previous_close.price))
+            .data(lots.filter(ell => ell.price >= previous_close.price))
             .join('rect')
-            .attr('x', b => x(b.shares_acc))
-            .attr('y', b => y(b.price))
-            .attr('width', b => x(b.shares))
-            .attr('height', b => y(previous_close.price) - y(b.price))
+            .attr('x', ell => x(ell.shares_acc))
+            .attr('y', ell => y(ell.price))
+            .attr('width', ell => x(ell.shares))
+            .attr('height', ell => y(previous_close.price) - y(ell.price))
             .attr('fill', 'lightcoral')
             .append('title')
                 .text(showCostBarTitle);
@@ -141,12 +141,12 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'cost-group')
         .selectAll('rect')
-            .data(buys)
+            .data(lots)
             .join('rect')
-            .attr('x', b => x(b.shares_acc))
-            .attr('y', b => y(b.price))
-            .attr('width', b => x(b.shares))
-            .attr('height', b => y(yLims[0]) - y(b.price))
+            .attr('x', ell => x(ell.shares_acc))
+            .attr('y', ell => y(ell.price))
+            .attr('width', ell => x(ell.shares))
+            .attr('height', ell => y(yLims[0]) - y(ell.price))
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
