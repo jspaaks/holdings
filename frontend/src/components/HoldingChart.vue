@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import type { Holding, Lot, CostBasisMethod } from '../types';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 import * as d3 from 'd3';
 
 const calcYLims = (min_price: number, max_price: number, previous_close_price?: number) => {
@@ -70,7 +70,7 @@ const drawChart = () => {
 
     const yLims = calcYLims(minPrice, maxPrice, previousClose && previousClose.price)
 
-    const sortedLots = sortLots(lots, 'FIFO');
+    const sortedLots = sortLots(lots, locals.costBasisMethod);
 
     const margins = {
         b: 60,
@@ -84,6 +84,7 @@ const drawChart = () => {
 
     // clear previous renders to prevent duplicate charts on updates
     svg.selectAll('*').remove();
+
 
     // set svg dimensions
     svg.attr('width', width)
@@ -182,7 +183,13 @@ const drawChart = () => {
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
+
     }
+
+    chartgroup.selectAll('rect').on("click", _ => {
+        locals.costBasisMethod = locals.costBasisMethod === 'FIFO' ? 'HIFO' : 'FIFO'
+        drawChart()
+    })
 
     // x axis
     chartgroup.append('g')
@@ -203,7 +210,10 @@ const drawChart = () => {
             .attr('class', 'xlabel')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
-            .text('Cumulative number of shares');
+            .text(`Cumulative number of shares (${locals.costBasisMethod})`)
+            .append('title')
+                .text('Click chart to toggle Cost Basis Method');
+
 
     // ylabel
     chartgroup.append('g')
@@ -285,6 +295,12 @@ const props = defineProps<{
     holding: Holding,
 }>();
 const chart = ref(null);
+const locals = reactive<{
+    costBasisMethod: CostBasisMethod
+}>({
+    costBasisMethod: 'FIFO'
+});
+
 const width = 350;
 const height = 275;
 onMounted(drawChart);
