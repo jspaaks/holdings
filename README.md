@@ -96,14 +96,14 @@ we will use in a moment
 $ pip install .
 ```
 
-Download the transactions spreadsheet `OfxDownload.csv` from Vanguard's Download Center, and save
-it for example as `data/OfxDownload.csv`. Then, start processing the data from the CSV file and let
-the script pipe its results to a new file, `data/db.json`.
-
 #### `process-holdings`
 
+Download the cost basis spreadsheet `costbasisdownload_3162.csv` from Vanguard and save it for
+example as `data/costbasisdownload_3162.csv`. Then, start processing the data from the CSV file and
+let the script pipe its results to a new file, `data/db.json`.
+
 ```console
-$ process-holdings ./data/OfxDownload.csv > ./data/db.json
+$ process-holdings ./data/costbasisdownload_3162.csv > ./data/db.json
 ```
 
 For reference, `process-holdings` has a help text as well:
