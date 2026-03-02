@@ -11,16 +11,17 @@
             "items": {
                 "additionalProperties": false,
                 "properties": {
-                    "buys": {
+                    "lots": {
                         "items": {
                             "additionalProperties": false,
                             "properties": {
-                                "amount": {
-                                    "type": "number"
-                                },
                                 "date": {
                                     "format": "date",
                                     "type": "string"
+                                },
+                                "order": {
+                                    "minimum": 0,
+                                    "type": "number"
                                 },
                                 "price": {
                                     "minimum": 0,
@@ -37,6 +38,7 @@
                             },
                             "required": [
                                 "date",
+                                "order",
                                 "price",
                                 "shares",
                                 "shares_acc"
@@ -97,10 +99,10 @@
                     }
                 },
                 "required": [
-                    "buys",
                     "cost",
                     "cost_per_share",
                     "id",
+                    "lots",
                     "max_price",
                     "min_price",
                     "previous_close",
@@ -110,10 +112,6 @@
             },
             "type": "array",
             "uniqueItems": true
-        },
-        "net_invested": {
-            "minimum": 0,
-            "type": "number"
         }
     },
     "required": [
