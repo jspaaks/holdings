@@ -7,10 +7,10 @@ export type Lot = {
 };
 
 export type Holding = {
-    lots: Lot[];
     cost: number;
     cost_per_share: number;
     id: string;
+    lots: Lot[];
     max_price: number;
     min_price: number;
     previous_close: {
@@ -19,3 +19,5 @@ export type Holding = {
     };
     shares: number;
 };
+
+export type CostBasisMethod = 'FIFO' | 'HIFO';

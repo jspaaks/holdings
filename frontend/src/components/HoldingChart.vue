@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import type { Holding, Lot } from '../types';
+import type { Holding, Lot, CostBasisMethod } from '../types';
 import { onMounted, ref, watch } from 'vue';
 import * as d3 from 'd3';
 
@@ -25,20 +25,52 @@ const calcYLims = (min_price: number, max_price: number, previous_close_price?: 
 
 const drawChart = () => {
 
-    const showCostBarTitle = (ell: Lot) => {
-        return `cost: ${Number.isInteger(ell.shares) ? ell.shares : ell.shares.toFixed(3)} @ $${(ell.price).toFixed(2)} = $${(ell.shares * ell.price).toFixed(2)} on ${ell.date}`;
+    const showCostBarTitle = (lot: Lot) => {
+        return `cost: ${Number.isInteger(lot.shares) ? lot.shares : lot.shares.toFixed(3)} @ $${(lot.price).toFixed(2)} = $${(lot.shares * lot.price).toFixed(2)} on ${lot.date}`;
+    }
+
+    const sortLots = (lots: Lot[], costBasisMethod: CostBasisMethod) => {
+
+        const fifoSorter = (left: Lot, right: Lot) => {
+            if (left.date < right.date) return -1;
+            if (left.date > right.date) return 1;
+            if (left.order < right.order) return -1;
+            if (left.order > right.order) return 1;
+            return 0;
+        }
+
+        const hifoSorter = (left: Lot, right: Lot) => {
+            if (left.price > right.price) return -1;
+            if (left.price < right.price) return 1;
+            return 0;
+        }
+
+        const sortedLots = lots.sort({
+            'FIFO': fifoSorter,
+            'HIFO': hifoSorter
+        }[costBasisMethod]);
+
+        let acc = 0;
+        for (let lot of sortedLots) {
+            lot.shares_acc = acc;
+            acc += lot.shares;
+        }
+
+        return sortedLots;
     }
 
     let {
         lots,
-        cost_per_share,
+        cost_per_share: costPerShare,
         id: ticker,
-        max_price,
-        min_price,
-        previous_close,
+        max_price: maxPrice,
+        min_price: minPrice,
+        previous_close: previousClose,
         shares } = props.holding;
 
-    const yLims = calcYLims(min_price, max_price, previous_close && previous_close.price)
+    const yLims = calcYLims(minPrice, maxPrice, previousClose && previousClose.price)
+
+    const sortedLots = sortLots(lots, 'FIFO');
 
     const margins = {
         b: 60,
@@ -80,17 +112,17 @@ const drawChart = () => {
         .attr('fill', '#fff')
 
     // bars
-    if (previous_close) {
+    if (previousClose) {
         // cost rects for profitable bars
         chartgroup.append('g')
         .attr('id', 'profitables-cost-group')
         .selectAll('rect')
-            .data(lots.filter(ell => ell.price < previous_close.price))
+            .data(sortedLots.filter(lot => lot.price < previousClose.price))
             .join('rect')
-            .attr('x', ell => x(ell.shares_acc))
-            .attr('y', ell => y(ell.price))
-            .attr('width', ell => x(ell.shares))
-            .attr('height', ell => y(yLims[0]) - y(ell.price))
+            .attr('x', lot => x(lot.shares_acc))
+            .attr('y', lot => y(lot.price))
+            .attr('width', lot => x(lot.shares))
+            .attr('height', lot => y(yLims[0]) - y(lot.price))
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
@@ -99,12 +131,12 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'unprofitables-cost-group')
         .selectAll('rect')
-            .data(lots.filter(ell => ell.price >= previous_close.price))
+            .data(sortedLots.filter(lot => lot.price >= previousClose.price))
             .join('rect')
-            .attr('x', ell => x(ell.shares_acc))
-            .attr('y', y(previous_close.price))
-            .attr('width', ell => x(ell.shares))
-            .attr('height', y(yLims[0]) - y(previous_close.price))
+            .attr('x', lot => x(lot.shares_acc))
+            .attr('y', y(previousClose.price))
+            .attr('width', lot => x(lot.shares))
+            .attr('height', y(yLims[0]) - y(previousClose.price))
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
@@ -113,24 +145,24 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'profitables-gain-group')
         .selectAll('rect')
-            .data(lots.filter(ell => ell.price < previous_close.price))
+            .data(sortedLots.filter(lot => lot.price < previousClose.price))
             .join('rect')
-            .attr('x', ell => x(ell.shares_acc))
-            .attr('y', y(previous_close.price))
-            .attr('width', ell => x(ell.shares))
-            .attr('height', ell => y(ell.price) - y(previous_close.price))
+            .attr('x', lot => x(lot.shares_acc))
+            .attr('y', y(previousClose.price))
+            .attr('width', lot => x(lot.shares))
+            .attr('height', lot => y(lot.price) - y(previousClose.price))
             .attr('fill', 'lightgreen')
 
         // losses bars
         chartgroup.append('g')
         .attr('id', 'unprofitables-loss-group')
         .selectAll('rect')
-            .data(lots.filter(ell => ell.price >= previous_close.price))
+            .data(sortedLots.filter(lot => lot.price >= previousClose.price))
             .join('rect')
-            .attr('x', ell => x(ell.shares_acc))
-            .attr('y', ell => y(ell.price))
-            .attr('width', ell => x(ell.shares))
-            .attr('height', ell => y(previous_close.price) - y(ell.price))
+            .attr('x', lot => x(lot.shares_acc))
+            .attr('y', lot => y(lot.price))
+            .attr('width', lot => x(lot.shares))
+            .attr('height', lot => y(previousClose.price) - y(lot.price))
             .attr('fill', 'lightcoral')
             .append('title')
                 .text(showCostBarTitle);
@@ -141,12 +173,12 @@ const drawChart = () => {
         chartgroup.append('g')
         .attr('id', 'cost-group')
         .selectAll('rect')
-            .data(lots)
+            .data(sortedLots)
             .join('rect')
-            .attr('x', ell => x(ell.shares_acc))
-            .attr('y', ell => y(ell.price))
-            .attr('width', ell => x(ell.shares))
-            .attr('height', ell => y(yLims[0]) - y(ell.price))
+            .attr('x', lot => x(lot.shares_acc))
+            .attr('y', lot => y(lot.price))
+            .attr('width', lot => x(lot.shares))
+            .attr('height', lot => y(yLims[0]) - y(lot.price))
             .attr('fill', 'sandybrown')
             .append('title')
                 .text(showCostBarTitle);
@@ -171,7 +203,7 @@ const drawChart = () => {
             .attr('class', 'xlabel')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
-            .text('Net cumulative number of shares');
+            .text('Cumulative number of shares');
 
     // ylabel
     chartgroup.append('g')
@@ -199,8 +231,8 @@ const drawChart = () => {
     cpsgroup.append('line')
         .attr('x1', x(0))
         .attr('x2', x(shares))
-        .attr('y1', y(cost_per_share))
-        .attr('y2', y(cost_per_share))
+        .attr('y1', y(costPerShare))
+        .attr('y2', y(costPerShare))
         .style('stroke', 'black')
         .style('stroke-width', 1)
         .style('stroke-dasharray', '7, 5');
@@ -212,13 +244,13 @@ const drawChart = () => {
         .attr('dominant-baseline', 'middle')
         .attr('x', x(shares))
         .attr('dx', '0.5em')
-        .attr('y', y(cost_per_share))
+        .attr('y', y(costPerShare))
         .attr('dy', '0em')
         .text('cps')
         .append('title')
-            .text(`cost per share: $${cost_per_share.toFixed(2)}`);
+            .text(`cost per share: $${costPerShare.toFixed(2)}`);
 
-    if (previous_close) {
+    if (previousClose) {
 
         // previous closing price group
         const pricegroup = chartgroup.append('g').attr('id', 'pricegroup')
@@ -227,8 +259,8 @@ const drawChart = () => {
         pricegroup.append('line')
             .attr('x1', x(0))
             .attr('x2', x(shares))
-            .attr('y1', y(previous_close.price))
-            .attr('y2', y(previous_close.price))
+            .attr('y1', y(previousClose.price))
+            .attr('y2', y(previousClose.price))
             .style('stroke', 'black')
             .style('stroke-width', 1)
             .style('stroke-dasharray', '15, 3');
@@ -240,11 +272,11 @@ const drawChart = () => {
             .attr('dominant-baseline', 'middle')
             .attr('x', x(shares))
             .attr('dx', '0.5em')
-            .attr('y', y(previous_close.price))
+            .attr('y', y(previousClose.price))
             .attr('dy', '0em')
             .text('price')
             .append('title')
-                .text(`previous-day close price: $${previous_close.price.toFixed(2)}`);
+                .text(`previous-day close price: $${previousClose.price.toFixed(2)}`);
 
     }
 };

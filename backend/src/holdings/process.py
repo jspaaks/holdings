@@ -21,7 +21,6 @@ class Holdings:
         self._calc_cost()
         self._calc_shares()
         self._calc_cost_per_share()
-        self._calc_shares_acc()
         self._calc_min_price()
         self._calc_max_price()
         self._add_previous_close_placeholder()
@@ -58,13 +57,6 @@ class Holdings:
     def _calc_shares(self):
         for holding in self._holdings:
             holding['shares'] = sum([ell['shares'] for ell in holding['lots']])
-
-    def _calc_shares_acc(self):
-        for holding in self._holdings:
-            acc = 0
-            for ell in holding['lots']:
-                ell['shares_acc'] = acc
-                acc += ell['shares']
 
     def _group_by_ticker(self):
         # group by ticker symbol and wrangle transactions into an array

@@ -30,18 +30,13 @@
                                 "shares": {
                                     "minimum": 0,
                                     "type": "number"
-                                },
-                                "shares_acc": {
-                                    "minimum": 0,
-                                    "type": "number"
                                 }
                             },
                             "required": [
                                 "date",
                                 "order",
                                 "price",
-                                "shares",
-                                "shares_acc"
+                                "shares"
                             ],
                             "type": "object"
                         },
