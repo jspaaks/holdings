@@ -20,14 +20,14 @@ const holdings = await fetchDataFromLocalhost('http://localhost:3000');
 </script>
 
 <template>
-    <div v-for='holding in holdings' :key='holding.id'>
+    <div class="card" v-for='holding in holdings' :key='holding.id'>
         <HoldingChart v-bind:holding='holding'/>
         <HoldingTable v-bind:holding='holding'/>
     </div>
 </template>
 
 <style scoped>
-    div {
+    .card {
         padding-top: 10px;
         padding-bottom: 10px;
         padding-left: 15px;

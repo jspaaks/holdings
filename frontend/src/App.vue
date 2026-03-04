@@ -13,6 +13,9 @@ const AsyncHoldings = defineAsyncComponent(() =>
             </template>
         </Suspense>
     </div>
+    <div class="centered">
+        Click a plot to toggle between FIFO and HIFO
+    </div>
 </template>
 
 <style scoped>
@@ -20,5 +23,8 @@ const AsyncHoldings = defineAsyncComponent(() =>
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
         gap: 3px;
+    }
+    .centered {
+        margin-top: 20px;
     }
 </style>
