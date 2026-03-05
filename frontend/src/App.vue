@@ -14,7 +14,7 @@ const AsyncHoldings = defineAsyncComponent(() =>
         </Suspense>
     </div>
     <div class="centered">
-        Click a plot to toggle between FIFO and HIFO
+        Click a plot to toggle between FIFO and HIFO lot ordering
     </div>
 </template>
 
@@ -25,6 +25,7 @@ const AsyncHoldings = defineAsyncComponent(() =>
         gap: 3px;
     }
     .centered {
+        font-size: small;
         margin-top: 20px;
     }
 </style>
