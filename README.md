@@ -1,6 +1,6 @@
 # Holdings
 
-Visualization of current holdings based on Vanguard downloadable CSV data file, `OfxDownload.csv`.
+Visualization of current holdings based on Vanguard downloadable CSV data file, `costbasisdownload_XXXX.csv`.
 
 ## Stack
 
@@ -98,12 +98,13 @@ $ pip install .
 
 #### `process-holdings`
 
-Download the cost basis spreadsheet `costbasisdownload_3162.csv` from Vanguard and save it for
-example as `data/costbasisdownload_3162.csv`. Then, start processing the data from the CSV file and
+Download the cost basis spreadsheet `costbasisdownload_XXXX.csv` from Vanguard, where `XXXX`
+represents the last 4 digits of your Vanguard account number, and save it for example as
+`data/costbasisdownload_XXXX.csv`. Then, start processing the data from the CSV file and
 let the script pipe its results to a new file, `data/db.json`.
 
 ```console
-$ process-holdings ./data/costbasisdownload_3162.csv > ./data/db.json
+$ process-holdings ./data/costbasisdownload_XXXX.csv > ./data/db.json
 ```
 
 For reference, `process-holdings` has a help text as well:
@@ -116,7 +117,7 @@ Usage: process-holdings FILENAME
               transactions for each of your holdings
 ```
 
-#### `get-prices`
+#### `get-prices` (optional step)
 
 In order to show the previous day's closing prices in each graph, you can retrieve pricing data
 from `api.massive.com`. This requires that you have an API key, which you can get by registering for
