@@ -25,7 +25,7 @@ const calcGainsAndLosses = (lots: Lot[], price?: number) => {
     }
 }
 
-let { lots, cost, previous_close } = props.holding
+let { cost, cost_per_share, lots, previous_close, shares } = props.holding
 
 const {gain, loss} = calcGainsAndLosses(lots, previous_close ? previous_close.price : undefined)
 
@@ -35,9 +35,10 @@ const {gain, loss} = calcGainsAndLosses(lots, previous_close ? previous_close.pr
     <table>
         <thead>
             <tr>
-                <th></th>
+                <th class="align-left">{{ shares.toString() + (shares == 1 ? " share" : " shares") }}</th>
                 <th class="align-right">%</th>
                 <th class="align-right">$</th>
+                <th class="align-right">$/share</th>
             </tr>
         </thead>
 
@@ -46,30 +47,35 @@ const {gain, loss} = calcGainsAndLosses(lots, previous_close ? previous_close.pr
                 <td class="align-left">cost</td>
                 <td class="align-right"></td>
                 <td class="align-right">{{ cost.toFixed(0) }}</td>
+                <td class="align-right">{{ (cost_per_share).toFixed(2) }}</td>
             </tr>
 
             <tr>
                 <td class="align-left">gain</td>
                 <td class="align-right">{{ gain === undefined ? '?' : (100 * gain / cost).toFixed(1) }}</td>
                 <td class="align-right">{{ gain === undefined ? '?' : gain.toFixed(0) }}</td>
+                <td></td>
             </tr>
 
             <tr>
                 <td class="align-left">loss</td>
                 <td class="align-right">{{ loss === undefined ? '?' : (100 * loss / cost).toFixed(1) }}</td>
                 <td class="align-right">{{ loss === undefined ? '?' : loss.toFixed(0)}}</td>
+                <td></td>
             </tr>
 
             <tr>
                 <td class="align-left">net</td>
                 <td class="align-right">{{ gain === undefined || loss === undefined ? '?' : (100 * (gain - loss) / cost).toFixed(1)}}</td>
                 <td class="align-right">{{ gain === undefined || loss === undefined ? '?' : (gain - loss).toFixed(0)}}</td>
+                <td class="align-right">{{ gain === undefined || loss === undefined ? '?' : ((gain - loss) / shares).toFixed(2)}}</td>
             </tr>
 
             <tr>
                 <td class="align-left">value</td>
                 <td class="align-right"></td>
                 <td class="align-right">{{ gain === undefined || loss === undefined ? '?' : (cost + gain - loss).toFixed(0) }}</td>
+                <td class="align-right">{{ previous_close ? (previous_close.price).toFixed(2) : '?' }}</td>
             </tr>
         </tbody>
     </table>
