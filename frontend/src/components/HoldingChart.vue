@@ -75,8 +75,8 @@ const drawChart = () => {
     const margins = {
         b: 60,
         t: 50,
-        l: 80,
-        r: 80,
+        l: 60,
+        r: 60,
     };
 
     // select the DOM element using the ref's value
@@ -218,7 +218,7 @@ const drawChart = () => {
     // ylabel
     chartgroup.append('g')
         .attr('id', 'ylabel')
-        .attr('transform', `translate(${-0.6 * margins.l}, ${(height - margins.b - margins.t) / 2}) rotate(-90)`)
+        .attr('transform', `translate(${-0.80 * margins.l}, ${(height - margins.b - margins.t) / 2}) rotate(-90)`)
         .append('text')
             .attr('class', 'ylabel')
             .attr('text-anchor', 'middle')
@@ -302,7 +302,7 @@ const locals = reactive<{
 });
 
 const width = 350;
-const height = 275;
+const height = 285;
 onMounted(drawChart);
 watch(() => props.holding, drawChart);
 
