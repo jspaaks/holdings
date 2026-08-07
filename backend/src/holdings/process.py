@@ -68,10 +68,13 @@ class Holdings:
 
         for ticker, group in grouped:
             lots = group.to_dict(orient='records')
-            for index, ell in enumerate(lots):
-                del ell['ticker']
-                ell['order'] = index
+            for index, lot in enumerate(lots):
+                lot['order'] = index
+                cost_basis_method = lot['cost_basis_method']
+                del lot['ticker']
+                del lot['cost_basis_method']
             self._holdings.append({
+                'cost_basis_method': cost_basis_method,
                 'id': ticker,
                 'lots': lots
             })
@@ -81,7 +84,7 @@ class Holdings:
         if not filepath.is_file():
             raise FileNotFoundError(f"File not found: '{filepath}'")
 
-        usecols = ['Acquired date', 'Symbol/CUSIP', 'Quantity', 'Cost per share']
+        usecols = ['Acquired date', 'Symbol/CUSIP', 'Quantity', 'Cost per share', 'Cost basis method']
         self._sheet = pd.read_csv(filepath, usecols=usecols, skiprows=self._skiprows)
 
     def _reformat_dates(self):
@@ -96,6 +99,7 @@ class Holdings:
             'Symbol/CUSIP': 'ticker',
             'Quantity': 'shares',
             'Cost per share': 'price',
+            'Cost basis method': 'cost_basis_method'
         }
         self._sheet.rename(columns=columns, inplace=True)
 
