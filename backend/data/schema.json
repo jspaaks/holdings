@@ -11,6 +11,25 @@
             "items": {
                 "additionalProperties": false,
                 "properties": {
+                    "cost": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "cost_basis_method": {
+                        "enum": [
+                            "FIFO",
+                            "HIFO"
+                        ],
+                        "type": "string"
+                    },
+                    "cost_per_share": {
+                        "minimum": 0,
+                        "type": "number"
+                    },
+                    "id": {
+                        "pattern": "[A-Z0-9\\.]{1,10}",
+                        "type": "string"
+                    },
                     "lots": {
                         "items": {
                             "additionalProperties": false,
@@ -41,18 +60,6 @@
                             "type": "object"
                         },
                         "type": "array"
-                    },
-                    "cost": {
-                        "minimum": 0,
-                        "type": "number"
-                    },
-                    "cost_per_share": {
-                        "minimum": 0,
-                        "type": "number"
-                    },
-                    "id": {
-                        "pattern": "[A-Z0-9\\.]{1,10}",
-                        "type": "string"
                     },
                     "max_price": {
                         "minimum": 0,
@@ -95,6 +102,7 @@
                 },
                 "required": [
                     "cost",
+                    "cost_basis_method",
                     "cost_per_share",
                     "id",
                     "lots",
